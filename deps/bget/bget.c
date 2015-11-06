@@ -398,12 +398,11 @@
     ==================
 */
 
-#define TestProg    20000	      /* Generate built-in test program
+//#define TestProg    20000	      
+/* Generate built-in test program
 					 if defined.  The value specifies
 					 how many buffer allocation attempts
 					 the test program should make. */
-#undef TestProg
-
 #define SizeQuant   4		      /* Buffer allocation size quantum:
 					 all buffers allocated are a
 					 multiple of this size.  This
