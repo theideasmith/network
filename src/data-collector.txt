@@ -1,25 +1,70 @@
 ============================================================
 Based on chapter 1 of the paper
-		 Characterization of Complex Networks: A Survey of measurements
-============================================================
+		Characterization of Complex Networks:
+			  A Survey of measurements
 ============================================================
 List of relevant cited articles in this one:
 
-Percolation and Random Graphs: 1, 2,3,4, 5,6,7
-Watts and Strogatz small world: 8
-Brabasi and Albert scale free: 9
+Percolation and Random Graphs: 1, 2,3,4, 5,6,7 Watts and
+Strogatz small world: 8 Brabasi and Albert scale free: 9
 Girvan and Newman on Community Structure: 10
 
 Structure and Dynamics of Complex Networks: 21, 23
 ============================================================
 
-The goal of this micro project is to study the relationship between different graph properties. It will generate the necessary data and run the necessary analysis to cluster graphs based connectivity, average path length, and degree distribution.
+The goal of this micro project is to study the relationship
+between different graph properties. I will generate many forms of graphs, each with unique properties, and cluster graphs based connectivity, average path length, and degree
+distribution.
 
-The paper deals with types of network measurements. Indeed, it is only by obtaining informative quantitative features of the networks topology that they can be characterized and analyzed and, particularly, their structure can be fully related with the respective dynamics. Applying some transformation to the network N and looking at the delta in the vectorized representation of N and N', u and u' respectively, can yield additional insight pertaining to the properties of the original network. NETWORK TRANSFORMATION DELTA.
+The paper deals with types of network measurements. Indeed,
+it is only by obtaining informative quantitative features of
+the networks topology that they can be characterized and
+analyzed and, particularly, their structure can be fully
+related with the respective dynamics. Applying some
+transformation to the network N and looking at the delta in
+the vectorized representation of N and N', u and u'
+respectively, can yield additional insight pertaining to the
+properties of the original network. THIS IS NETWORK TRANSFORMATION
+DELTA.
 
 Graph properties:
 
-N(G): Set of vertices of graph G
-E(G): Set of M edges of graph G
-w:E(G) -> R: Mapping of weights to edge
-D(n): degree of node n
+ N(G)       	Set of vertices of graph G
+ E(G)       	Set of M edges of graph G
+w:E(G) -> R		Mapping of weights to edge7
+ |X|			Cardinality of Set X or D(n)
+  N 			Number of vertices |N(G)|
+  M    			Edges, or |E(G)|
+  W				Weight Matrix
+  A				Adjacency Matrix
+  a_{ij}		Element of the adjacency matrix
+  k_{i} 		Degree of vertex N
+  k^{out}_{i} 	Out-degree of vertex i
+  k^{in}_{i}  	In-degree of vertex i
+  v(i)			Set of neighbors of vertex i
+||X|| 			ßSum of the elements of matrix X
+δ_{T}(W) 		Threshholding operation on a weighted
+				digraph, yielding adjacency matrix
+
+The average degree of a network, represented by adjacency matrix A, is
+
+	avgDeg(A) = sum(A)*1/N.
+
+With a weighted network, it is
+
+	avgDegWeighted(W) = sum(W)*1/N.
+
+
+
+Two non-adjacent vertices can be connected through a sequence of m edges (i, k1), (k1, k2),...(km-1,j), forming set Z of all walks between edges;
+
+	if (N_i,N_j) ∋ Z(G) ⋀ (N_j,N_h) ∋ Z(G)
+	then Z(G) = Z(G) ∪ {(N_i,N_h)}.
+
+If all vertices and edges along a path are distinct, it is considered a path. Otherwise, it is a loop.
+
+One thing to think about is the different types of connectivity among neurons. See the paper Dissecting Functional Connectivity  of Neuronal Microcircuits: Experimental and Theoretical Insights.
+
+- Anatomical Connectivity: monosynaptic path. Neuron A is anatomically linked to neuron B.
+- Functional Conectivity: a statistical dependence between neuron A and B. The firing of B can be predicted by the firing of A.
+- Effective Connectivity: a polysynaptic path between neurons. Test for this by perturbing the activity of one neuron and measuring the effect of that on other neurons.

@@ -1,5 +1,4 @@
 import numpy as np
-import directedgenerators
 
 def __foundation_matrix(num_nodes):
     a = np.arange(num_nodes).reshape([1,num_nodes])
