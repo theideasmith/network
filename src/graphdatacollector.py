@@ -51,6 +51,7 @@ def average_connectivity(n, p, G):
         nx.average_clustering(G)
     ]
     return data
+
 average_connectivity.label = "Average Connectivity"
 
 # Incides in Matrix
@@ -92,8 +93,10 @@ def collect_raw(
     fract = 1/float(p_size)
 
     A = [
-      [collector(n, fract*p, nx.fast_gnp_random_graph(n,fract*p))
-        for p in xrange(1,p_size+1)]
+          [collector(n, fract*p, nx.fast_gnp_random_graph(n,fract*p))
+            # for x in xrange(1,10)
+            for p in xrange(1,p_size+1)]
+
       for n in xrange(n_s,n_e+1)
     ]
     return A
@@ -101,7 +104,7 @@ def collect_raw(
 def correlate(Z=average_connectivity):
     data = collect_raw(
         Z,
-        (1,50),
+        (1,10),
         10)
 
     return extract_dimensions(np.array(data))
