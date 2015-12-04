@@ -19,6 +19,7 @@ Based on chapter 1 of the paper
 
 '''
 
+# Data Saving
 def safe_path_relative(save_path):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), save_path)
     # if(not os.path.exists(path)):
@@ -39,44 +40,68 @@ def savegraph(G, pos, save_path):
     nx.draw(G,pos, node_color="#A0CBE2", width=4)
     plt.savefig(path.format(save_path),format="PNG")
 
-def save_csv(data, header, writer):
+def save_csv(header,data, writer):
     writer.writerow(header)
     writer.writerows(data)
 
+# Collectors
+def average_connectivity(n, p, G):
+    data =  [
+        n, p,
+        nx.average_clustering(G)
+    ]
+    return data
+average_connectivity.label = "Average Connectivity"
 
 # Incides in Matrix
 N = 0
 P = 1
 AVG_CLUSTERING   = 1
 
-def graph_collect(n, p, G):
-    data =  [
-        n, p,
-        nx.average_clustering(G)
-    ]
-    return data
+def extract_dimensions(
+    B,
+    x_ind=0,
+    y_ind=1,
+    z_ind=2):
+    x = B[:,:,x_ind]
 
-def data_pairs(array, index1, index2):
-    return [[array[j][index1],array[j][index2]] for j in xrange(0,len(array))]
+    y = B[:,:,y_ind]
 
-def collect_data():
+    z = B[:,:,z_ind]
+
+    return (x,y,z)
+
+# Aggregators
+def collect_raw(
+    collector,
+    n_range, p_size):
+
+    # If both are zero
+    if((n_range[0]+n_range[1])==0):
+        n_range=(1,1)
+
+    # If the first is 0 then make it 1
+    if(n_range[0]==0):
+        n_range[0]=1
+
+    # If second is greater than the first
+    if(n_range[0]>n_range[1]):
+         n_range=(n_range[1],n_range[0])
+
+    n_s, n_e = n_range
+    fract = 1/float(p_size)
 
     A = [
-      graph_collect(n, 0.1*p, nx.fast_gnp_random_graph(n,0.1*p))
-      for n in xrange(1,51)
-      for p in xrange(1,11)
+      [collector(n, fract*p, nx.fast_gnp_random_graph(n,fract*p))
+        for p in xrange(1,p_size+1)]
+      for n in xrange(n_s,n_e+1)
     ]
-
     return A
 
-def reshape_data(A):
-    M = np.array(A)
-    return M.reshape((50,10,M.shape[1]))
+def correlate(Z=average_connectivity):
+    data = collect_raw(
+        Z,
+        (1,50),
+        10)
 
-def extract_dimensions(B):
-    x = B[:,:,0]
-
-    y = B[:,:,1]
-
-    z = B[:,:,2]
-    return (x,y,z)
+    return extract_dimensions(np.array(data))
