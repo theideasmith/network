@@ -18,5 +18,6 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
 ax.plot(points1X, points1Y, points1Z, 'd', markersize=8, markerfacecolor='red', label='points1')
-plt.show()
+plt.savefig("./data.png",format="PNG")
 
+# plt.show()
