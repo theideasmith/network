@@ -3,6 +3,8 @@
 #include <time.h>
 // #include <igraph.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_linalg.h>
+
 
 #define MATRIX_ALLOC(N) (gsl_matrix_alloc(N, N))
 #define MATRIX_FREE(network) (gsl_matrix_free(network))
@@ -18,13 +20,24 @@ void placemap(gsl_matrix *m,
 
   int N = m->tda;
   for (int i = 0; i < N; i++) {
-    for (int j = N+1; j < N; j++) {
+    for (int j = 0; j < N; j++) {
       gsl_matrix_set(
           m,i,j
          ,func(gsl_matrix_get(m, i,j),i,j,m)
       );
     }
   }
+}
+
+double matrix_sum(gsl_matrix *matrix){
+  double sum;
+  int N = matrix->tda;
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < N; j++) {
+        sum += gsl_matrix_get(matrix, i, j);
+    }
+  }
+  return sum;
 }
 
 // drand48() - a function in stdlib.h that generates random
@@ -40,7 +53,7 @@ void wire_random(gsl_matrix *matrix, double p) {
 
   // I merged all three loops into 1
   for (int i = 0; i < N; i++) {
-    for (int j = i+1; j < N; j++) {
+    for (int j = 0; j < N; j++) {
         // Generate connection with a probability
         set = drand48() < p ? 1.0 : 0.0;
         gsl_matrix_set(matrix, i, j, set);
@@ -53,9 +66,23 @@ void wire_random(gsl_matrix *matrix, double p) {
 // counttriangles() - finds the number of triangles
 /*
   Eventually upgrade this algorithm to the
-  one described in https://www-complexnetworks.lip6.fr/~latapy/Publis/triangles_short.pdf
+  one described in
+    - https://www-complexnetworks.lip6.fr/~latapy/Publis/triangles_short.pdf
+  or in:
+    - http://www.brandonthomson.com/s/pdf/cs_basics_3.pdf
 */
 int counttriangles(gsl_matrix *matrix, int N) {
+
+  // //Summing the cube of an adjacency matrix gives the
+  // //number of triangles
+  // gsl_matrix_mul_elements(matrix, matrix);
+  // gsl_matrix_mul_elements(matrix, matrix);
+  // gsl_matrix_mul_elements(matrix, matrix);
+  // return matrix_sum(
+  //   matrix
+  // );
+
+
   int count = 0;
   for (int i = 0; i < N; i++) {
     for (int j = i + 1; j < N; j++) {
@@ -69,6 +96,8 @@ int counttriangles(gsl_matrix *matrix, int N) {
     }
   }
   return count;
+  
+
 }
 
 void print_matr(gsl_matrix *m){
