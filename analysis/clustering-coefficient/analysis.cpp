@@ -1,113 +1,117 @@
 
-#include <stdlib.h>
-#include <time.h>
-// #include <igraph.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_linalg.h>
-
-
-#define MATRIX_ALLOC(N) (gsl_matrix_alloc(N, N))
-#define MATRIX_FREE(network) (gsl_matrix_free(network))
-
 #define LOWER 50
 #define HIGHER 100
 #define MAXITER 100
+#define BYTE_OFFSET_DOUBLE sizeof(double)
+#define mIND(m, n, i, j) m[i*n + j]
 
-//Maps a gsl_matrix in place. Matrix is inevitably mutable
-void placemap(gsl_matrix *m,
-            //returned value | current | i | j | matrix
-              double(*func)(double, int, int, gsl_matrix*)){
+#define TRI_MODE 0
 
-  int N = m->tda;
-  for (int i = 0; i < N; i++) {
-    for (int j = 0; j < N; j++) {
-      gsl_matrix_set(
-          m,i,j
-         ,func(gsl_matrix_get(m, i,j),i,j,m)
-      );
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
+// #include <igraph.h>
+
+// In the next iteration, port
+// the matrix code over to igraph
+#include <gsl/gsl_blas.h>
+
+using namespace std;
+
+
+void printm(gsl_matrix *m) {
+
+  for (int i = 0; i < m->size1; i++) {
+    for (int j = 0; j < m->size2; j++) {
+      printf("%i ",(int)gsl_matrix_get(m, i,j));
     }
+    printf("\n");
   }
 }
 
-double matrix_sum(gsl_matrix *matrix){
-  double sum;
-  int N = matrix->tda;
+
+// drand48() - a function in stdlib.h that generates random number from 0.0 to
+// 1.0
+// srand48(unsigned long int) - function that initializes the random number
+// generator with a key
+// generate() - creates random connections with probability p
+double *wire_random(int N, double p) {
+  int size = N*N;
+  double *result = new double[size];
+
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-        sum += gsl_matrix_get(matrix, i, j);
+      mIND(result, N, i, j) = 0.0;
+      int rand = drand48() < p;
+      if(j!=i) {
+        mIND(result, N, i, j) = rand;
+        mIND(result, N, j, i) = rand;
+      }
     }
   }
-  return sum;
+
+  return result;
 }
-
-// drand48() - a function in stdlib.h that generates random
-// number from 0.0 to 1.0 srand48(unsigned long int) -
-// function that initializes the random number generator
-// with a key
-// generate() - creates random connections with probability
-// p
-void wire_random(gsl_matrix *matrix, double p) {
-  //matrix->tda is the row length of the matrix
-  int N = matrix->tda;
-  double set;
-
-  // I merged all three loops into 1
-  for (int i = 0; i < N; i++) {
-    for (int j = 0; j < N; j++) {
-        // Generate connection with a probability
-        set = drand48() < p ? 1.0 : 0.0;
-        gsl_matrix_set(matrix, i, j, set);
-        gsl_matrix_set(matrix, j, i, set);
-    }
-  }
-}
-
 
 // counttriangles() - finds the number of triangles
-/*
-  Eventually upgrade this algorithm to the
-  one described in
-    - https://www-complexnetworks.lip6.fr/~latapy/Publis/triangles_short.pdf
-  or in:
-    - http://www.brandonthomson.com/s/pdf/cs_basics_3.pdf
-*/
-int counttriangles(gsl_matrix *matrix, int N) {
+int counttriangles(double *network, int N) {
 
-  // //Summing the cube of an adjacency matrix gives the
-  // //number of triangles
-  // gsl_matrix_mul_elements(matrix, matrix);
-  // gsl_matrix_mul_elements(matrix, matrix);
-  // gsl_matrix_mul_elements(matrix, matrix);
-  // return matrix_sum(
-  //   matrix
-  // );
+#if TRI_MODE == 0
+  gsl_matrix_view view = gsl_matrix_view_array(network, N, N);
 
+  gsl_matrix *network_view = &view.matrix;
+  gsl_matrix *result1 = gsl_matrix_calloc(N, N);
+  gsl_matrix *result2 = gsl_matrix_calloc(N, N);
+
+  // printf("------\n");
+  // printm(network_view);
+
+  int two = gsl_blas_dgemm(
+    CblasNoTrans,
+    CblasNoTrans,
+    1.0,
+    network_view,
+    network_view,
+    1.0,
+    result1);
+
+  int three = gsl_blas_dgemm(
+    CblasNoTrans,
+    CblasNoTrans,
+    1.0,
+    result1,
+    network_view,
+    1.0,
+    result2);
+
+  int ttl = 0;
+  for (int i = 0; i < N; i++) {
+    ttl += gsl_matrix_get(result2, i, i);
+  }
+
+
+  // Because each of the three elements in involved
+  // can be connected in 2 directions. 
+  return ttl/6;
+
+#elif TRI_MODE == 1
 
   int count = 0;
   for (int i = 0; i < N; i++) {
     for (int j = i + 1; j < N; j++) {
       for (int k = j + 1; k < N; k++) {
-        //Using the boolean addition trick here.
-        // One of the beauties of C
-        count += ((gsl_matrix_get(matrix,i,j) == 1.0) &&
-                  (gsl_matrix_get(matrix,j,k) == 1.0) &&
-                  (gsl_matrix_get(matrix,i,k) == 1.0));
+        if ((mIND(network, N, i, j) == 1.0) &&
+            (mIND(network, N, j, k) == 1.0) &&
+            (mIND(network, N, k, i) == 1.0)) {
+          count++;
+        }
       }
     }
   }
   return count;
-  
 
-}
-
-void print_matr(gsl_matrix *m){
-  int N = m->tda;
-  for(int i=0;i<N;i++){
-    for(int j=0;j<N;j++){
-      printf("%f ",gsl_matrix_get(m,i,j));
-    }
-    printf("\n");
-  }
+#endif
 }
 
 int main() {
@@ -120,22 +124,24 @@ int main() {
   //   and 100 samples of each state, results output is CSV format
   for (int n = LOWER; n <= HIGHER; n++) {
 
-    gsl_matrix *network = MATRIX_ALLOC(n);
-
     for (double p = 0.1; p < 1.00001; p += 0.1) {
+
       long int avg = 0.0;
       for (int iter = 0; iter < MAXITER; iter++) {
-        wire_random(network, p);
-        // print_matr(network);
+        double *network = wire_random(n, p);
+
         avg += counttriangles(network, n);
+        //  for (int i = 0; i < n; i++) delete [] network[i];
+
+        delete[] network;
       }
+
       avg /= (double)MAXITER;
       double percent = avg / (n * (n - 1) * (n - 2) / 6.0);
-
-      printf("%i,%f,%f\n",n,p,percent);
-
+      //      cout << "Size " << n << ", p = " << p << ", Number of triangles =
+      //      " << avg << " percent possible of " << percent << "\n";
+      cout << n << "," << p << "," << percent << "\n";
     }
-    MATRIX_FREE(network);
   }
 
 }

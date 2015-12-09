@@ -44,20 +44,15 @@ def save_csv(header,data, writer):
     writer.writerow(header)
     writer.writerows(data)
 
-# Collectors
-def average_connectivity(n, p, G):
-    data =  [
-        n, p,
-        nx.average_clustering(G)
-    ]
-    return data
-
-average_connectivity.label = "Average Connectivity"
-
 # Incides in Matrix
 N = 0
 P = 1
 AVG_CLUSTERING   = 1
+
+MAXITER_AVGING = 10
+MAXITER = 10
+LOWER = 1
+HIGHER = 10
 
 def extract_dimensions(
     B,
@@ -75,7 +70,7 @@ def extract_dimensions(
 # Aggregators
 def collect_raw(
     collector,
-    n_range, p_size):
+    n_range, p_size, p_samples):
 
     # If both are zero
     if((n_range[0]+n_range[1])==0):
@@ -92,19 +87,25 @@ def collect_raw(
     n_s, n_e = n_range
     fract = 1/float(p_size)
 
-    A = [
-          [collector(n, fract*p, nx.fast_gnp_random_graph(n,fract*p))
-            # for x in xrange(1,10)
-            for p in xrange(1,p_size+1)]
+    def avg_ps(n,p):
+        ttl = 0
+        for x in xrange(1,p_samples):
+            ttl=ttl+collector(nx.fast_gnp_random_graph(n,fract*p))
+        avg = ttl/p_samples
+        return [n,p,avg]
 
-      for n in xrange(n_s,n_e+1)
-    ]
+    A = [
+         [avg_ps(n,p) for p in xrange(1,p_size+1)]
+          for n in xrange(n_s,n_e+1)
+        ]
+
     return A
 
-def correlate(Z=average_connectivity):
+def correlate(Z):
     data = collect_raw(
         Z,
-        (1,10),
-        10)
+        (LOWER,HIGHER),
+        MAXITER,
+        MAXITER_AVGING)
 
     return extract_dimensions(np.array(data))
