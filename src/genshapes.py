@@ -4,8 +4,8 @@ import os
 import math as m
 
 # Clear the cache
-shutil.rmtree('./shapes')
-os.mkdir('./shapes')
+shutil.rmtree('./../data/shapes')
+os.mkdir('./..data/shapes')
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -32,7 +32,7 @@ for j in xrange(1,50):
 	nx.draw(G,pos, node_color="#A0CBE2", width=4)
 	# time.sleep(1)
 	# plt.plot()
-	plt.savefig("./shapes/shape{0}.png".format(j),format="PNG")
+	plt.savefig("./../data/shapes/shape{0}.png".format(j),format="PNG")
 
 # Z = lambda i,n: 1
 # matrix = ng.matrix_circular(80, dg.DirectedGenerators.npoly(80))

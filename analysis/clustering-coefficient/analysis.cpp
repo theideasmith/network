@@ -64,9 +64,8 @@ int counttriangles(double *network, int N) {
   gsl_matrix *result1 = gsl_matrix_calloc(N, N);
   gsl_matrix *result2 = gsl_matrix_calloc(N, N);
 
-  // printf("------\n");
-  // printm(network_view);
-
+  //(N^3)/6 = number of triangles,
+  // where N is an adjacency matrix
   int two = gsl_blas_dgemm(
     CblasNoTrans,
     CblasNoTrans,
@@ -92,7 +91,7 @@ int counttriangles(double *network, int N) {
 
 
   // Because each of the three elements in involved
-  // can be connected in 2 directions. 
+  // can be connected in 2 directions.
   return ttl/6;
 
 #elif TRI_MODE == 1
