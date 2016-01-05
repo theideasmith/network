@@ -12,7 +12,7 @@ November 2015
 def npoly(l):
     return lambda i,n: (n==1 or n==(l-1))
 
-''' Whether n is in a given range'''
+''' Whether n is in a given range ahead'''
 def __inclusive_range_checker( start, n, stop):
     return ((n>=start) and (n<=stop))
 
