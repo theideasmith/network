@@ -1,0 +1,105 @@
+{
+    "beaker": "2",
+    "evaluators": [
+        {
+            "name": "Html",
+            "plugin": "Html",
+            "view": {
+                "cm": {
+                    "mode": "htmlmixed"
+                }
+            }
+        },
+        {
+            "name": "JavaScript",
+            "plugin": "JavaScript",
+            "jsSetting2": "",
+            "jsSetting1": "",
+            "view": {
+                "cm": {
+                    "mode": "javascript",
+                    "background": "#FFE0F0"
+                }
+            }
+        },
+        {
+            "name": "IPython",
+            "plugin": "IPython",
+            "setup": "%matplotlib inline\nimport numpy\nimport matplotlib\nfrom matplotlib import pylab, mlab, pyplot\nnp = numpy\nplt = pyplot\nfrom IPython.display import display\nfrom IPython.core.pylabtools import figsize, getfigs\nfrom pylab import *\nfrom numpy import *\n",
+            "view": {
+                "cm": {
+                    "mode": "python"
+                }
+            }
+        },
+        {
+            "name": "R",
+            "plugin": "R",
+            "view": {
+                "cm": {
+                    "mode": "r"
+                }
+            }
+        },
+        {
+            "name": "Node",
+            "plugin": "Node",
+            "view": {
+                "cm": {
+                    "mode": "javascript"
+                }
+            }
+        }
+    ],
+    "cells": [
+        {
+            "id": "markdownnaTzkQ",
+            "type": "markdown",
+            "body": [
+                "1/16/16",
+                "",
+                "Taking baby steps by understanding the function-structure relationship in specific circuits in the connectome to then create a general model for creating whole-network behavior. ",
+                "",
+                "- Connecting a Connectome to Behavior: An Ensemble of Neuroanatomical Models of C. elegans Klinotaxis: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002890",
+                "- Topological and Spatial Features of Brain Networks: http://arxiv.org/ftp/arxiv/papers/1105/1105.4705.pdf",
+                "",
+                "Input comes in through sensory neurons -> interneurons -> muscle cells.",
+                "",
+                "Develop a tool to tell you where the most important output will be given an input neuron. To probe the network, find most important outputs for sensory inputs and find best path given output and input neurons. "
+            ],
+            "evaluatorReader": false
+        },
+        {
+            "id": "codeo0RnPO",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "import os",
+                    "os.chdir(\"/Users/akivalipshitz/Developer/NetworkGen/CElegans\")",
+                    "",
+                    "import networkx as nx",
+                    "import matplotlib.pyplot as plt",
+                    "import pandas",
+                    "import numpy as np",
+                    "import connectome ",
+                    "",
+                    "def visit(network):",
+                    "    node_stack = [n]"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": "<div class=\"output_subarea output_text\"><pre>2392</pre></div>",
+                "selectedType": "Html",
+                "pluginName": "IPython",
+                "shellId": "E783833630FE4928BC9CB6EFFDA640D4",
+                "elapsedTime": 366,
+                "dataresult": 2392
+            },
+            "evaluatorReader": true,
+            "lineCount": 11
+        }
+    ],
+    "namespace": {}
+}
