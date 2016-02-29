@@ -65,7 +65,9 @@
                 "",
                 "Input comes in through sensory neurons -> interneurons -> muscle cells.",
                 "",
-                "Develop a tool to tell you where the most important output will be given an input neuron. To probe the network, find most important outputs for sensory inputs and find best path given output and input neurons. "
+                "Develop a tool to tell you where the most important output will be given an input neuron. To probe the network, find most important outputs for sensory inputs and find best path given output and input neurons. ",
+                "",
+                "Start with this baby step prediction of what the most significant pathways "
             ],
             "evaluatorReader": false
         },
@@ -78,6 +80,7 @@
                     "import os",
                     "os.chdir(\"/Users/akivalipshitz/Developer/NetworkGen/CElegans\")",
                     "",
+                    "import hiveplot as hp",
                     "import networkx as nx",
                     "import matplotlib.pyplot as plt",
                     "import pandas",
@@ -98,7 +101,7 @@
                 "dataresult": 2392
             },
             "evaluatorReader": true,
-            "lineCount": 11
+            "lineCount": 12
         }
     ],
     "namespace": {}
